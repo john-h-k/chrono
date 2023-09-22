@@ -206,6 +206,40 @@ impl arbitrary::Arbitrary<'_> for NaiveTime {
 }
 
 impl NaiveTime {
+    /// Returns a `NaiveTime` instance representing the start of a day.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let start = NaiveTime::beginning_of_day();
+    /// assert_eq!(start, NaiveTime::from_hms(0, 0, 0));
+    /// ```
+    pub const fn beginning_of_day() -> NaiveTime {
+        NaiveTime { secs: 0, frac: 0 }
+    }
+
+    /// Returns a `NaiveTime` instance representing the end of a day.
+    ///
+    /// # Panics
+    ///
+    /// This function will panic if `NaiveTime::from_hms_opt(23, 59, 59)` results in `None`.
+    /// However, this is highly unlikely to occur and should be considered safe.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let end = NaiveTime::end_of_day();
+    /// assert_eq!(end, NaiveTime::from_hms(23, 59, 59));
+    /// ```
+    pub const fn end_of_day() -> NaiveTime {
+        const EOD: NaiveTime = match NaiveTime::from_hms_opt(23, 59, 59) {
+            Some(value) => value,
+            None => panic!("`NaiveTime::from_hms_opt(23, 59, 59)` should always result in Some(_)"),
+        };
+
+        EOD
+    }
+
     /// Makes a new `NaiveTime` from hour, minute and second.
     ///
     /// No [leap second](#leap-second-handling) is allowed here;
